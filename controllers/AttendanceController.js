@@ -36,10 +36,9 @@
 const Attendance = require('../models/Attendance');
 const multer = require('multer');
 const path = require('path');
-const Employee = require("../models/employee");
-const admin = require("../config/firebaseAdmin"); // make sure this is set up
-
-// Configure Multer for file uploads
+// const Employee = require("../models/employee");
+// const admin = require("../config/firebaseAdmin"); // make sure this is set up
+// Configure Multer for file uploads\
 const storage = multer.diskStorage({
   destination: 'uploads/', // Specify your upload directory
   filename: (req, file, cb) => {
@@ -164,84 +163,84 @@ exports.deleteAttendance = async (req, res) => {
 
 
 
-// Save FCM token
-exports.saveFcmToken = async (req, res) => {
-  const { employeeId } = req.params;
-  const { token } = req.body;
-  try {
-    const employee = await Employee.findOneAndUpdate(
-      { employeeId },
-      { fcmToken: token },
-      { new: true, upsert: true }
-    );
-    res.json({ message: "Token saved", employee });
-  } catch (err) {
-    res.status(500).json({ message: "Error saving token", err });
-  }
-};
+// // Save FCM token
+// exports.saveFcmToken = async (req, res) => {
+//   const { employeeId } = req.params;
+//   const { token } = req.body;
+//   try {
+//     const employee = await Employee.findOneAndUpdate(
+//       { employeeId },
+//       { fcmToken: token },
+//       { new: true, upsert: true }
+//     );
+//     res.json({ message: "Token saved", employee });
+//   } catch (err) {
+//     res.status(500).json({ message: "Error saving token", err });
+//   }
+// };
 
-// Save attendance reply
-exports.saveAttendanceReply = async (req, res) => {
-  const { employeeId } = req.params;
-  const { reply } = req.body;
-  try {
-    const employee = await Employee.findOne({ employeeId });
-    if (!employee) return res.status(404).json({ message: "Employee not found" });
+// // Save attendance reply
+// exports.saveAttendanceReply = async (req, res) => {
+//   const { employeeId } = req.params;
+//   const { reply } = req.body;
+//   try {
+//     const employee = await Employee.findOne({ employeeId });
+//     if (!employee) return res.status(404).json({ message: "Employee not found" });
 
-    employee.attendanceReplies.push({ reply, date: new Date() });
-    await employee.save();
+//     employee.attendanceReplies.push({ reply, date: new Date() });
+//     await employee.save();
 
-    res.json({ message: "Reply saved successfully" });
-  } catch (err) {
-    res.status(500).json({ message: "Error saving reply", err });
-  }
-};
+//     res.json({ message: "Reply saved successfully" });
+//   } catch (err) {
+//     res.status(500).json({ message: "Error saving reply", err });
+//   }
+// };
 
-// Get today's replies
-exports.getTodayAttendance = async (req, res) => {
-  const today = new Date().setHours(0, 0, 0, 0);
-  try {
-    const employees = await Employee.find({});
-    const report = employees.map(emp => {
-      const todayReply = emp.attendanceReplies.find(r =>
-        new Date(r.date).setHours(0, 0, 0, 0) === today
-      );
-      return {
-        employeeId: emp.employeeId,
-        name: emp.name,
-        reply: todayReply ? todayReply.reply : "no response"
-      };
-    });
-    res.json(report);
-  } catch (err) {
-    res.status(500).json({ message: "Error fetching replies", err });
-  }
-};
+// // Get today's replies
+// exports.getTodayAttendance = async (req, res) => {
+//   const today = new Date().setHours(0, 0, 0, 0);
+//   try {
+//     const employees = await Employee.find({});
+//     const report = employees.map(emp => {
+//       const todayReply = emp.attendanceReplies.find(r =>
+//         new Date(r.date).setHours(0, 0, 0, 0) === today
+//       );
+//       return {
+//         employeeId: emp.employeeId,
+//         name: emp.name,
+//         reply: todayReply ? todayReply.reply : "no response"
+//       };
+//     });
+//     res.json(report);
+//   } catch (err) {
+//     res.status(500).json({ message: "Error fetching replies", err });
+//   }
+// };
 
 
-//test messages
-exports.sendTestNotification = async (req, res) => {
-  const { employeeId } = req.params;
+// //test messages
+// exports.sendTestNotification = async (req, res) => {
+//   const { employeeId } = req.params;
 
-  try {
-    const employee = await Employee.findOne({ employeeId });
-    if (!employee || !employee.fcmToken) {
-      return res.status(404).json({ message: "Employee or FCM token not found" });
-    }
+//   try {
+//     const employee = await Employee.findOne({ employeeId });
+//     if (!employee || !employee.fcmToken) {
+//       return res.status(404).json({ message: "Employee or FCM token not found" });
+//     }
 
-    const message = {
-      token: employee.fcmToken,
-      notification: {
-        title: "Daily Attendance",
-        body: "Will you come to office today?"
-      },
-      data: { type: "attendance_check" }
-    };
+//     const message = {
+//       token: employee.fcmToken,
+//       notification: {
+//         title: "Daily Attendance",
+//         body: "Will you come to office today?"
+//       },
+//       data: { type: "attendance_check" }
+//     };
 
-    const response = await admin.messaging().send(message);
-    res.json({ message: "Notification sent successfully", response });
-  } catch (error) {
-    console.error("Error sending notification:", error);
-    res.status(500).json({ message: "Error sending notification", error });
-  }
-};
+//     const response = await admin.messaging().send(message);
+//     res.json({ message: "Notification sent successfully", response });
+//   } catch (error) {
+//     console.error("Error sending notification:", error);
+//     res.status(500).json({ message: "Error sending notification", error });
+//   }
+// };

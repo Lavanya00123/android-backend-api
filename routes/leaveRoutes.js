@@ -12,7 +12,7 @@ const {
 const router = express.Router();
 
 // @route   POST /api/leaves
-router.post('/Leaves', createLeave);
+router.post('/Leaves', createLeave)
 
 // @route   GET /api/leaves
 router.get('/', getLeaves); 

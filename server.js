@@ -15,6 +15,7 @@ const attendanceRoutes = require('./routes/attendanceRoutes');
 const complaintRoutes = require('./routes/complaintRoutes');
 const leaveRoutes = require('./routes/leaveRoutes');
 const salaryRoutes = require('./routes/SalaryRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 // Cron + Firebase
 const cron = require("node-cron");
@@ -68,6 +69,7 @@ app.use('/api/attendance', attendanceRoutes);
 app.use('/api', complaintRoutes);
 app.use('/api/leaves', leaveRoutes);
 app.use('/api', salaryRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Endpoint to save call logs for a specific employee
 app.post('/api/employees/:employeeId/callLogs', async (req, res) => {
